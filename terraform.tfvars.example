@@ -1,0 +1,12 @@
+aws_region         = "us-east-1"
+bucket_name        = "spacelift-example-dev-bucket"
+enable_versioning  = true
+block_public_access = true
+spacelift_environment = "dev"
+
+common_tags = {
+  Environment = "dev"
+  Project     = "spacelift-example"
+  Terraform   = "true"
+  Owner       = "platform-team"
+}

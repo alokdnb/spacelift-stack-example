@@ -1,0 +1,127 @@
+# Spacelift Stack Configuration
+# Stack name: spacelift-example-dev
+# Description: Example Spacelift stack using terraform-module-example module
+# Environment: Development
+
+version: "1"
+
+# Backend configuration for state storage
+backend:
+  type: s3
+  config:
+    bucket: spacelift-terraform-state
+    key: stacks/spacelift-example-dev/terraform.tfstate
+    region: us-east-1
+    encrypt: true
+    dynamodb_table: spacelift-terraform-locks
+
+# Terraform configuration
+terraform:
+  version: 1.5.0
+  min_version: 1.0
+  workflow: default
+
+  # Backend initialization
+  init:
+    - backend
+
+  # Pre-planning hooks
+  before_plan:
+    - echo "Running before-plan hook"
+    - terraform validate
+
+  # Post-planning hooks
+  after_plan:
+    - echo "Planning completed successfully"
+
+  # Pre-apply hooks
+  before_apply:
+    - echo "Running before-apply hook"
+
+  # Post-apply hooks
+  after_apply:
+    - echo "Apply completed successfully"
+
+# Policies
+policies:
+  - filename: policies/access.rego
+    enabled: true
+  - filename: policies/cost.rego
+    enabled: false
+
+# Hooks
+hooks:
+  before_init:
+    - type: webhook
+      enabled: true
+
+  before_plan:
+    - type: notify
+      channel: "#spacelift-notifications"
+      enabled: true
+
+  after_plan:
+    - type: notify
+      channel: "#spacelift-notifications"
+      enabled: true
+
+  before_apply:
+    - type: webhook
+      enabled: true
+
+  after_apply:
+    - type: notify
+      channel: "#spacelift-notifications"
+      enabled: true
+
+# Behavior configuration
+behavior:
+  # Automatic deployment settings
+  auto_deploy: false
+  auto_destroy: false
+
+  # Runner settings
+  runner:
+    image: spacelift/runner-terraform:latest
+
+  # Environment variables
+  env:
+    - key: TF_LOG
+      value: INFO
+    - key: TF_INPUT
+      value: "false"
+
+# Labels for organization and filtering
+labels:
+  - example
+  - development
+  - aws
+  - terraform-module-example
+
+# Notifications
+notifications:
+  slack:
+    enabled: true
+    channels:
+      - "#spacelift-notifications"
+      - "#platform-team"
+
+  email:
+    enabled: false
+
+# Access control
+access_control:
+  # Space configuration
+  space: dev
+
+  # RBAC roles
+  roles:
+    - role: stack_admin
+      teams:
+        - platform-team
+    - role: stack_reviewer
+      teams:
+        - engineering-team
+    - role: stack_viewer
+      teams:
+        - operations-team

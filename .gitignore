@@ -1,0 +1,45 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which might contain sensitive data
+*.tfvars
+*.tfvars.json
+
+# Ignore override files (these are usually used to override resources)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore plan files
+*.tfplan
+
+# Ignore Mac .DS_Store files
+.DS_Store
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.env
+
+# Ignore lock file
+.terraform.lock.hcl
+
+# Spacelift specific
+.spacelift/
+spacelift.local
